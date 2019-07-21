@@ -1,0 +1,35 @@
+[user]
+  email = you@example.com
+  name = John
+  username = iamjg
+[core]
+  editor = vim
+  excludesfile = ~/.gitignore_global
+  whitespace = indent-with-non-tab
+[alias]
+  br = branch
+  ci = commit
+  co = checkout
+  st = status
+[pager]
+  branch = false
+[color]
+  ui = true
+[color "branch"]
+  current = yellow green bold
+  local = blue dim
+  remote = red dim
+[color "status"]
+  added = green bold
+  changed = yellow bold
+[diff]
+  tool = meld
+[difftool]
+  prompt = false
+[merge]
+  tool = meld 
+[mergetool]
+  prompt = false
+[help]
+  autocorrect = 15
+

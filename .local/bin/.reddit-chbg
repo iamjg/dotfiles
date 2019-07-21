@@ -1,0 +1,84 @@
+#!/bin/bash 
+
+set -o errexit
+
+#export UID=1000
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
+export DISPLAY=':0'
+export PATH="/usr/bin:${PATH}"
+export USER=user1
+export HOME="/home/${USER}"
+
+shopt -s extglob
+
+set -x
+LOG="$XDG_CACHE_HOME/.reddit-chbg/"
+exec 3>> "$LOG"
+echo '---' >> "$LOG"
+BASH_XTRACEFD=3
+
+BASE_URL='https://www.reddit.com/r/'
+SUBREDDITS=(
+    EarthPorn
+    wallpaper
+    wallpapers)
+TOP_N=5
+BG_DIR="${HOME}/Downloads/backgrounds"
+
+function make_source_url {
+    local -n source_url_nref="$1"
+
+    local nth_subreddit="$(( RANDOM % ${#SUBREDDITS[@]} ))"
+    source_url_nref="${BASE_URL}${SUBREDDITS[$nth_subreddit]}/top.json"
+}
+
+function get_data {
+    local source_url="$1"
+    local -n bg_title_nref="$2"
+    local -n bg_url_nref="$3"
+
+    local nth_picture="$(( RANDOM % $TOP_N ))"
+    local base_element=".data.children[${nth_picture}].data"
+    local data=$(curl --header 'User-agent: bc' "$source_url" | 
+                 jq --raw-output ${base_element}.title,${base_element}.url)
+
+    local IFS=$'\n'
+    set $data
+
+    bg_title_nref="$1"
+    bg_title_nref="${bg_title_nref//+([[:blank:]])/_}"
+    bg_title_nref="${bg_title_nref//[^a-zA-Z0-9_]/}"
+
+    bg_url_nref="$2"
+}
+
+function download_bg {
+    curl "$1" --output "${BG_DIR}/${2}"
+}
+
+function set_bg_kde {
+
+script=$(cat <<END
+string:
+var Desktops = desktops();                                                                                                                       
+for (i = 0; i < Desktops.length; i++) {
+    d = Desktops[i];
+    d.wallpaperPlugin = "org.kde.image";
+    d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");
+    d.writeConfig("Image", "file://${BG_DIR}/${1}");
+}
+END
+)
+
+    dbus-send\
+        --session\
+        --dest=org.kde.plasmashell\
+        --type=method_call\
+        /PlasmaShell org.kde.PlasmaShell.evaluateScript "$script"
+}
+
+make_source_url source_url
+get_data "$source_url" bg_title bg_url
+download_bg "$bg_url" "$bg_title"
+set_bg_kde "$bg_title"
+

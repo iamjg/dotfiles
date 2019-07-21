@@ -1,0 +1,43 @@
+#env
+
+# man less
+
+# -i or --ignore-case
+# -J or --status-column
+# -M or --LONG-PROMPT
+# -N or --LINE-NUMBERS
+# -R or --RAW-CONTROL-CHARS
+# -xn,... or --tabs=n,...
+# -zn or --window=n or -n
+LESS = -i -J -M -N -R -x4 -z4 +Gg
+
+# man termcap
+# man console_codes
+
+# Start standout mode
+LESS_TERMCAP_so = [1;33;42m
+# End standout mode
+LESS_TERMCAP_se = [21;39;49m
+
+# Start bold mode
+LESS_TERMCAP_md = [1;31m
+
+# Start half bright mode
+LESS_TERMCAP_mh = [2m
+
+# Start underlining
+LESS_TERMCAP_us = [4;1;34m
+# End underlining
+LESS_TERMCAP_ue = [24;21;39m
+
+# Start blinking
+LESS_TERMCAP_mb = [5m
+
+# Start reverse mode
+LESS_TERMCAP_mr = [7m
+
+# Dark mode
+LESS_TERMCAP_mk = [8m
+
+# End all mode like so, us, mb, md, and mr
+LESS_TERMCAP_me = [0m

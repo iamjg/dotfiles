@@ -12,7 +12,7 @@ export HOME="/home/${USER}"
 shopt -s extglob
 
 set -x
-LOG="$XDG_CACHE_HOME/.reddit-chbg/"
+LOG="$XDG_CACHE_HOME/reddit-chbg"
 exec 3>> "$LOG"
 echo '---' >> "$LOG"
 BASH_XTRACEFD=3
